@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <map>
+#include <string>
 #include <vector>
 
 class myShader
