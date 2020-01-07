@@ -83,9 +83,9 @@ void processEvents(SDL_Event current_event)
 			((btRigidBody *)physics[scene["ball"]])->setLinearVelocity(btVector3(cam1->camera_forward.x*60, cam1->camera_forward.y * 60, cam1->camera_forward.z * 60));
 
 			//applying force to mario along the direction of camera_forward.
-			t = physics[scene["mario"]]->getWorldTransform();
-			((btRigidBody *)physics[scene["mario"]])->setMotionState(new btDefaultMotionState(t));
-			((btRigidBody *)physics[scene["mario"]])->setLinearVelocity(btVector3(cam1->camera_forward.x * 60, cam1->camera_forward.y * 60, cam1->camera_forward.z * 60));
+			t = physics[scene["sphere"]]->getWorldTransform();
+			((btRigidBody *)physics[scene["sphere"]])->setMotionState(new btDefaultMotionState(t));
+			((btRigidBody *)physics[scene["sphere"]])->setLinearVelocity(btVector3(cam1->camera_forward.x * 60, cam1->camera_forward.y * 60, cam1->camera_forward.z * 60));
 		}
 		if (current_event.key.keysym.sym == SDLK_UP || current_event.key.keysym.sym == SDLK_w)
 			cam1->moveForward(movement_stepsize);
@@ -218,6 +218,8 @@ int main(int argc, char *argv[])
 	cam1 = new myCamera();
 	SDL_GetWindowSize(window, &cam1->window_width, &cam1->window_height);
 
+	myCamera *cam2 = new myCamera();
+
 
 	checkOpenGLInfo(true);
 
@@ -229,6 +231,12 @@ int main(int argc, char *argv[])
 	scene.lights->lights.push_back(new myLight(glm::vec3(1, 0, 0), glm::vec3(0.5, 0.5, 0.5), myLight::POINTLIGHT));
 	scene.lights->lights.push_back(new myLight(glm::vec3(0, 1, 0), glm::vec3(0.6, 0.6, 0.6), myLight::POINTLIGHT));
 
+	/**************************INITIALIZING FBO ***************************/
+	//plane will draw the color_texture of the framebufferobject fbo.
+	myFBO *fbo = new myFBO();
+	cam2->setFBOCam();
+	fbo->initFBO(cam2->window_width, cam2->window_height);
+	cam2->translate(glm::vec3(5, 5, 60));
 
 	/**************************INITIALIZING OBJECTS THAT WILL BE DRAWN ***************************/
 	myObject *obj;
@@ -236,44 +244,105 @@ int main(int argc, char *argv[])
 	obj = new myObject();
 	if (!obj->readObjects("models/Maze/L4.obj", true, false))
 		cout << "obj3 readScene failed.\n";
+	obj->scaleObject(5.0f, 5.0f, 5.0f);
 	obj->createmyVAO();
 	scene.addObject(obj, "LCorridor");
 	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.7f);
 	
 	obj = new myObject();
 	obj->readObjects("models/Maze/U2.obj", true, false);
+	obj->scaleObject(5.0f, 5.0f, 5.0f);
 	obj->createmyVAO();
 	scene.addObject(obj, "UCorridor");
 	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.1f);
 	
 	obj = new myObject();
 	obj->readObjects("models/Maze/Y2.obj", true, false);
+	obj->scaleObject(5.0f, 5.0f, 5.0f);
 	obj->createmyVAO();
 	scene.addObject(obj, "YCorridor");
 	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.1f);
-	
 
-	/*//mario 
+
 	obj = new myObject();
-	obj->readObjects("models/MarioandLuigi/mario_obj.obj", true, false);
-	obj->scaleObject(0.1f, 0.1f, 0.1f);
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane(); 
+	obj->scaleObject(2.f, 2.5f, 2.0f);
 	obj->createmyVAO();
-	obj->translate(0.0f, 40.0f, 20.0f);
-	scene.addObject(obj, "mario");
-	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_CHARACTER_OBJECT, 50.0f, 0.1f);*/
-	
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 3.14159f);
+	obj->translate(10, 0, 30);
+	scene.addObject(obj, "planeL1");
 
-	//ball
-	/*obj = new myObject();
-	obj->readObjects("models/basketball.obj", true, false);
-	obj->scaleObject(10.0f, 10.0f, 10.0f);
+	obj = new myObject();
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane();
+	obj->scaleObject(2.f, 2.5f, 2.0f);
 	obj->createmyVAO();
-	obj->translate(0.0f, 50.0f, 10.0f);
-	scene.addObject(obj, "ball");
-	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK, 12.0f, 1.0f);*/
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 3.0f*3.14159f/2.0f);
+	obj->translate(70, 0, -50);
+	scene.addObject(obj, "planeL2");
+
+	obj = new myObject();
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane();
+	obj->scaleObject(2.f, 2.5f, 2.0f);
+	obj->createmyVAO();
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 3.14159f);
+	obj->translate(110, 0, 0);
+	scene.addObject(obj, "planeU1");
+
+	obj = new myObject();
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane();
+	obj->scaleObject(2.f, 2.5f, 2.0f);
+	obj->createmyVAO();
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 3.14159f);
+	obj->translate(190, 0, 0);
+	scene.addObject(obj, "planeU2");
+
+	obj = new myObject();
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane();
+	obj->scaleObject(2.f, 2.5f, 2.0f);
+	obj->createmyVAO();
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 3.14159f);
+	obj->translate(310, 0,0 );
+	scene.addObject(obj, "planeY1");
+
+	obj = new myObject();
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane();
+	obj->scaleObject(2.f, 2.5f, 2.0f);
+	obj->createmyVAO();
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 5*3.14159265359f/3);
+	obj->translate(326, 0, -62.3);
+	scene.addObject(obj, "planeY2");
+
+	obj = new myObject();
+	obj->readObjects("models/plane.obj", false, false);
+	obj->computeTexturecoordinates_plane();
+	obj->scaleObject(2.f, 2.5f, 2.0f);
+	obj->createmyVAO();
+	obj->setTexture(fbo->colortexture, mySubObject::COLORMAP);
+	obj->rotate(0, 1, 0, 3.14159f/3);
+	obj->translate(264, 0, -45);
+	scene.addObject(obj, "planeY3");
 
 
 
+	obj = new myObject();
+	obj->readObjects("models/sphere.obj", true, false);
+	//obj->scaleObject(0.05f, 0.05f, 0.05f);
+	obj->createmyVAO();
+	obj->translate(0.0f, 5.0f, 0.0f);
+	scene.addObject(obj, "sphere");
+	physics.addObject(obj, myPhysics::CONCAVE, btCollisionObject::CF_CHARACTER_OBJECT, 50.0f, 0.1f); 
 
 	/**************************SETTING UP OPENGL SHADERS ***************************/
 	myShaders shaders;
@@ -295,6 +364,30 @@ int main(int argc, char *argv[])
 			SDL_GetWindowSize(window, &cam1->window_width, &cam1->window_height);
 			windowsize_changed = false;
 		}
+
+
+		curr_shader = shaders["shader_texturephong"];
+		curr_shader->start();
+		glm::mat4 fprojmatrix = cam2->projectionMatrix();
+		glm::mat4 fviewmatrix = cam2->viewMatrix();
+		curr_shader->setUniform("myprojection_matrix", fprojmatrix);
+		curr_shader->setUniform("myview_matrix", fviewmatrix);
+		fbo->clear();
+		fbo->bind();
+		{
+			
+			physics.getModelMatrix(scene["LCorridor"]);
+			scene["LCorridor"]->displayObjects(curr_shader, fviewmatrix);
+
+			physics.getModelMatrix(scene["UCorridor"]);
+			scene["UCorridor"]->displayObjects(curr_shader, fviewmatrix);
+
+			physics.getModelMatrix(scene["YCorridor"]);
+			scene["YCorridor"]->displayObjects(curr_shader, fviewmatrix);
+		}
+		fbo->unbind();
+
+
 
 		//Computing transformation matrices. Note that model_matrix will be computed and set in the displayScene function for each object separately
 		glViewport(0, 0, cam1->window_width, cam1->window_height);
@@ -319,8 +412,9 @@ int main(int argc, char *argv[])
 		curr_shader = shaders["shader_phong"];
 		curr_shader->start();
 		
-		
-
+		physics.getModelMatrix(scene["sphere"]);
+		scene["sphere"]->displayObjects(curr_shader, view_matrix);
+	
 		curr_shader = shaders["shader_texturephong"];
 		curr_shader->start();
 		
@@ -331,8 +425,16 @@ int main(int argc, char *argv[])
 		scene["UCorridor"]->displayObjects(curr_shader, view_matrix);
 
 		physics.getModelMatrix(scene["YCorridor"]);
+
 		scene["YCorridor"]->displayObjects(curr_shader, view_matrix);
 
+		scene["planeL1"]->displayObjects(curr_shader, view_matrix);
+		scene["planeL2"]->displayObjects(curr_shader, view_matrix);
+		scene["planeU1"]->displayObjects(curr_shader, view_matrix);
+		scene["planeU2"]->displayObjects(curr_shader, view_matrix);
+		scene["planeY1"]->displayObjects(curr_shader, view_matrix);
+		scene["planeY2"]->displayObjects(curr_shader, view_matrix);
+		scene["planeY3"]->displayObjects(curr_shader, view_matrix);
 
 		if (picked_object != nullptr)
 		{

@@ -129,6 +129,10 @@ void myCamera::moveBack(float size)
 	camera_eye -= size * camera_forward;
 }
 
+void myCamera::translate(glm::vec3 vector) {
+	camera_eye += vector;
+}
+
 void myCamera::turnLeft(float size)
 {
 	rotate(camera_forward, camera_up, size, true);
@@ -144,5 +148,10 @@ void myCamera::print() const
 	cout << "Eye: (" << camera_eye.x << ", " << camera_eye.y << ", " << camera_eye.z << ")" << endl;
 	cout << "Forward: (" << camera_forward.x << ", " << camera_forward.y << ", " << camera_forward.z << ")" << endl;
 	cout << "Up: (" << camera_up.x << ", " << camera_up.y << ", " << camera_up.z << ")" << endl;
+}
+
+void myCamera::setFBOCam()
+{
+	window_width = 1.25* window_height;
 }
 

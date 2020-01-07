@@ -34,6 +34,8 @@ public:
 	void moveBack(float size);
 	void turnLeft(float size);
 	void turnRight(float size);
-
+	void setFBOCam();
+	void translate(glm::vec3 vector);
 	void print() const;
+
 };
