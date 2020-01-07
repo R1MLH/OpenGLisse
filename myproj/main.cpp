@@ -233,14 +233,6 @@ int main(int argc, char *argv[])
 	/**************************INITIALIZING OBJECTS THAT WILL BE DRAWN ***************************/
 	myObject *obj;
 
-	//the big christmas scene.
-	/*obj = new myObject();
-	if (!obj->readObjects("models/ChristmasChallenge3.obj", true, false))
-		cout << "obj3 readScene failed.\n";
-	obj->createmyVAO();
-	scene.addObject(obj, "ChristmasChallenge3");
-	physics.addObject(obj, myPhysics::CONCAVE, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.7f);*/
-
 	obj = new myObject();
 	if (!obj->readObjects("models/Maze/L4.obj", true, false))
 		cout << "obj3 readScene failed.\n";
@@ -250,17 +242,13 @@ int main(int argc, char *argv[])
 	
 	obj = new myObject();
 	obj->readObjects("models/Maze/U2.obj", true, false);
-	//obj->scaleObject(0.1f, 0.1f, 0.1f);
 	obj->createmyVAO();
-	//obj->translate(0.0f, 40.0f, 20.0f);
 	scene.addObject(obj, "UCorridor");
 	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.1f);
 	
 	obj = new myObject();
 	obj->readObjects("models/Maze/Y2.obj", true, false);
-	//obj->scaleObject(0.1f, 0.1f, 0.1f);
 	obj->createmyVAO();
-	//obj->translate(0.0f, 40.0f, 20.0f);
 	scene.addObject(obj, "YCorridor");
 	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.1f);
 	
