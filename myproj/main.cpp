@@ -234,32 +234,55 @@ int main(int argc, char *argv[])
 	myObject *obj;
 
 	//the big christmas scene.
-	obj = new myObject();
+	/*obj = new myObject();
 	if (!obj->readObjects("models/ChristmasChallenge3.obj", true, false))
 		cout << "obj3 readScene failed.\n";
 	obj->createmyVAO();
 	scene.addObject(obj, "ChristmasChallenge3");
-	physics.addObject(obj, myPhysics::CONCAVE, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.7f);
+	physics.addObject(obj, myPhysics::CONCAVE, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.7f);*/
 
+	obj = new myObject();
+	if (!obj->readObjects("models/Maze/L4.obj", true, false))
+		cout << "obj3 readScene failed.\n";
+	obj->createmyVAO();
+	scene.addObject(obj, "LCorridor");
+	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.7f);
+	
+	obj = new myObject();
+	obj->readObjects("models/Maze/U2.obj", true, false);
+	//obj->scaleObject(0.1f, 0.1f, 0.1f);
+	obj->createmyVAO();
+	//obj->translate(0.0f, 40.0f, 20.0f);
+	scene.addObject(obj, "UCorridor");
+	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.1f);
+	
+	obj = new myObject();
+	obj->readObjects("models/Maze/Y2.obj", true, false);
+	//obj->scaleObject(0.1f, 0.1f, 0.1f);
+	obj->createmyVAO();
+	//obj->translate(0.0f, 40.0f, 20.0f);
+	scene.addObject(obj, "YCorridor");
+	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_STATIC_OBJECT, 0.0f, 0.1f);
+	
 
-	//mario 
+	/*//mario 
 	obj = new myObject();
 	obj->readObjects("models/MarioandLuigi/mario_obj.obj", true, false);
 	obj->scaleObject(0.1f, 0.1f, 0.1f);
 	obj->createmyVAO();
 	obj->translate(0.0f, 40.0f, 20.0f);
 	scene.addObject(obj, "mario");
-	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_CHARACTER_OBJECT, 50.0f, 0.1f);
+	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_CHARACTER_OBJECT, 50.0f, 0.1f);*/
 	
 
 	//ball
-	obj = new myObject();
+	/*obj = new myObject();
 	obj->readObjects("models/basketball.obj", true, false);
 	obj->scaleObject(10.0f, 10.0f, 10.0f);
 	obj->createmyVAO();
 	obj->translate(0.0f, 50.0f, 10.0f);
 	scene.addObject(obj, "ball");
-	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK, 12.0f, 1.0f);
+	physics.addObject(obj, myPhysics::CONVEX, btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK, 12.0f, 1.0f);*/
 
 
 
@@ -308,18 +331,19 @@ int main(int argc, char *argv[])
 		curr_shader = shaders["shader_phong"];
 		curr_shader->start();
 		
-		physics.getModelMatrix(scene["ChristmasChallenge3"]);
-		scene["ChristmasChallenge3"]->displayObjects(curr_shader, view_matrix);
-
-		physics.getModelMatrix(scene["ball"]);
-		scene["ball"]->displayObjects(curr_shader, view_matrix);
-
+		
 
 		curr_shader = shaders["shader_texturephong"];
 		curr_shader->start();
 		
-		physics.getModelMatrix(scene["mario"]);
-		scene["mario"]->displayObjects(curr_shader, view_matrix);
+		physics.getModelMatrix(scene["LCorridor"]);
+		scene["LCorridor"]->displayObjects(curr_shader, view_matrix);
+
+		physics.getModelMatrix(scene["UCorridor"]);
+		scene["UCorridor"]->displayObjects(curr_shader, view_matrix);
+
+		physics.getModelMatrix(scene["YCorridor"]);
+		scene["YCorridor"]->displayObjects(curr_shader, view_matrix);
 
 
 		if (picked_object != nullptr)
